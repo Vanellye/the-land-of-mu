@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "track_id": "demo-returning-light",
+  "title": "Returning Light — Render Test",
+  "tempo_bpm": 68,
+  "meter": {"numerator": 3, "denominator": 4},
+  "sample_rate": 44100,
+  "channels": 2,
+  "bit_depth": 16,
+  "master_gain": 0.22,
+  "notes": [
+    {"pitch": 57, "start_beats": 0, "duration_beats": 1, "velocity": 82, "track": "melody"},
+    {"pitch": 60, "start_beats": 1, "duration_beats": 1, "velocity": 76, "track": "melody"},
+    {"pitch": 64, "start_beats": 2, "duration_beats": 1, "velocity": 82, "track": "melody"},
+    {"pitch": 62, "start_beats": 3, "duration_beats": 1, "velocity": 78, "track": "melody"},
+    {"pitch": 60, "start_beats": 4, "duration_beats": 1, "velocity": 74, "track": "melody"},
+    {"pitch": 57, "start_beats": 5, "duration_beats": 1, "velocity": 82, "track": "melody"},
+    {"pitch": 45, "start_beats": 0, "duration_beats": 3, "velocity": 48, "track": "drone"},
+    {"pitch": 52, "start_beats": 3, "duration_beats": 3, "velocity": 42, "track": "drone"}
+  ],
+  "notes_about_render": "Dependency-free sine oscillator proof of pipeline. Expand arrangement before release."
+}
