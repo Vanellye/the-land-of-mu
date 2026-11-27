@@ -10,13 +10,21 @@
       "role": "audio_master",
       "path": "renders/wav/returning-light-demo-master.wav",
       "required": true,
-      "status": "not_created"
+      "status": "generated_not_human_approved",
+      "sha256": "e69f1f247a17d0cbd4f8877bc9e4ddaac1ac4c77f7bd3e4bde8f8d836f45b2dc"
     },
     {
       "role": "mastering_measurement_report",
-      "path": "renders/receipts/returning-light-demo-master.wav.mastering.json",
+      "path": "renders/wav/returning-light-demo-master.wav.mastering.json",
       "required": true,
-      "status": "not_created"
+      "status": "generated",
+      "sha256": null
+    },
+    {
+      "role": "premaster_archive",
+      "path": "renders/wav/returning-light-demo.wav",
+      "required": false,
+      "status": "existing_original_preserved"
     },
     {
       "role": "midi",
@@ -39,7 +47,7 @@
   ],
   "gates": {
     "rights_review": "pending",
-    "mastering_measurement": "pending",
+    "mastering_measurement": "generated_pending_human_engineering_review",
     "human_listening_approval": "pending",
     "metadata_and_artwork_review": "pending",
     "human_publication_authorization": "not_granted"
