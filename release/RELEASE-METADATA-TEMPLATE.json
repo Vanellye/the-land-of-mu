@@ -1,0 +1,51 @@
+{
+  "release_id": "REPLACE-WITH-UNIQUE-ID",
+  "track_id": "REPLACE-WITH-TRACK-ID",
+  "title": "",
+  "version": "1.0",
+  "primary_artist": "",
+  "contributors": [],
+  "composer_credits": [],
+  "lyricist_credits": [],
+  "producer_credits": [],
+  "publisher": "",
+  "isrc": null,
+  "release_date": null,
+  "territories": [],
+  "explicit_content": "unknown",
+  "artwork": {
+    "file": null,
+    "sha256": null,
+    "rights_status": "pending"
+  },
+  "audio_master": {
+    "file": null,
+    "format": "WAV",
+    "sample_rate_hz": null,
+    "bit_depth": null,
+    "sha256": null
+  },
+  "rights_review": {
+    "status": "pending",
+    "record": null
+  },
+  "mastering_review": {
+    "status": "pending",
+    "measurement_report": null
+  },
+  "listening_review": {
+    "status": "pending",
+    "approval_record": null
+  },
+  "human_release_approval": {
+    "status": "not_granted",
+    "approver": null,
+    "approved_at": null,
+    "approved_asset_hashes": []
+  },
+  "distribution": {
+    "destination": null,
+    "published_url": null,
+    "post_publication_verified_at": null
+  }
+}
