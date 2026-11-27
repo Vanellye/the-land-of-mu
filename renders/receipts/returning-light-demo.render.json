@@ -5,14 +5,14 @@
   "rendered_at": "2026-11-27T22:31:24.556378+00:00",
   "source_arrangement": "arrangements/demo-returning-light.json",
   "track_id": "demo-returning-light",
-  "title": "Returning Light \u2014 Render Test",
+  "title": "Returning Light — Render Test",
   "tempo_bpm": 68,
   "meter": {
     "numerator": 3,
     "denominator": 4
   },
   "wav": {
-    "file": "returning-light.wav",
+    "file": "returning-light-demo.wav",
     "bytes": 995668,
     "sha256": "5506ff80d0485eadf4f7795b01cc048e9388c4aaf69433ab8bb660a4acae5342",
     "sample_rate": 44100,
@@ -24,7 +24,7 @@
     "peak_dbfs": -17.21
   },
   "midi": {
-    "file": "returning-light.mid",
+    "file": "returning-light-demo.mid",
     "bytes": 103,
     "sha256": "036fd8055f7cce06ad1c41f4109083418c256400b2f8430796701d8f49d072ef",
     "format": 0,
