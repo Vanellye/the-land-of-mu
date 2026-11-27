@@ -18,52 +18,88 @@ The stream distinguishes:
 
 ## 2. Production stream
 
-IDEA → COMPOSED → ARRANGED → RENDER_QUEUED → WAV_MIDI_RENDERED → TECH_CHECKED → LISTENED → MIXED → MASTERED → RELEASE_CANDIDATE
+IDEA → COMPOSED → ARRANGED → RENDER_QUEUED → WAV_MIDI_RENDERED → TECH_CHECKED → RIGHTS_REVIEWED → MASTERED → LISTENING_APPROVED → RELEASE_CANDIDATE → HUMAN_RELEASE_APPROVED → PUBLIC_RELEASE
 
 ### Render command
 
     python3 tools/render.py arrangements/demo-returning-light.json --out renders/demo-returning-light
 
-Expected outputs:
-- PCM WAV, 16-bit, stereo, 44.1 kHz by default
-- Standard MIDI File, format 0
-- JSON render receipt with renderer version, settings, file sizes, SHA-256 hashes, and validation results
+The starter engine synthesizes sine-wave note events and produces actual PCM WAV and Standard MIDI files. It is transparent and dependency-free. Future engines can replace the oscillator with sampled instruments, soundfonts, synthesis plugins, and a mix/master chain while retaining the envelope and receipt format.
 
-The starter engine synthesizes sine-wave note events so the pipeline creates real audio and MIDI files. It is transparent and dependency-free. Future engines can replace the oscillator with sampled instruments, soundfonts, synthesis plugins, and a mix/master chain while retaining the envelope and receipt format.
+## 3. Persistent main-branch file storage
 
-## 3. Quality gates
+The private main branch stores versioned production files:
 
-Technical checks:
+- renders/wav/ — WAV masters and premaster exports
+- renders/midi/ — Standard MIDI files
+- renders/stems/ — aligned stems
+- renders/receipts/ — renderer settings, technical validation, and SHA-256 receipts
+- evidence/rights/ — rights review records and safe evidence references
+- evidence/mastering/ — mastering measurements and reports
+- evidence/listening/ — human listening reviews
+- evidence/approvals/ — human release approvals
+
+The manually dispatched workflow at .github/workflows/render-and-store-main.yml renders the demo and commits WAV, MIDI, and receipt files to main. The workflow does not publish to external services.
+
+### Stored first render
+
+- WAV: renders/wav/returning-light-demo.wav
+- MIDI: renders/midi/returning-light-demo.mid
+- Receipt: renders/receipts/returning-light-demo.render.json
+
+The receipt records 44.1 kHz, 16-bit, stereo PCM, 5.644118 seconds, MIDI format 0 at 480 PPQ, file sizes, SHA-256 hashes, and technical validation. This is a basic sine-oscillator demo render, not a mastered commercial release.
+
+## 4. Technical quality checks
+
 - WAV header and PCM format parse correctly
 - Sample rate, bit depth, channels, and duration match settings
 - MIDI header, track chunk, tempo, note-on/note-off events, and end marker are valid
 - Output files are non-empty and SHA-256 hashes are recorded
 - No clipping in generated PCM
 
-Listening and production checks:
-- Musical phrasing and timing reviewed
-- Melody, bass, harmony, rhythm, and dynamics reviewed
-- Mix translation and headroom checked
-- Master loudness and true-peak targets selected for intended platform and genre
-- Artifacts and metadata read back after export
+Technical validation does not establish subjective quality or mastering compliance.
 
-Technical validation does not establish subjective quality or mastering compliance. Those require listening and appropriate measurement.
+## 5. Rights review
 
-## 4. Separate public release stream
+Current status: NOT REVIEWED. No rights clearance is claimed.
 
-PRIVATE_COMPOSITION → RENDERED_MASTER → RIGHTS_REVIEW → TECHNICAL_QA → LISTENING_REVIEW → METADATA_AND_ARTWORK → HUMAN_RELEASE_APPROVAL → PUBLIC_RELEASE
+Before release, inventory composition, lyrics, samples, loops, soundfonts, performances, artwork, and contributions. Record each creator/rightsholder, source, rights basis, permitted scope, restrictions, evidence reference, reviewer, decision, and date. Pending, restricted, or rejected material blocks release until resolved.
+
+See production/RIGHTS-REVIEW.md.
+
+## 6. Mastering
+
+Current status: NOT MASTERED. The starter renderer has no EQ, compression, limiting, true-peak oversampling, loudness normalization, dithering, or mastering measurement.
+
+A master record must include the premaster and final hashes, sample format, LUFS-I, LRA where relevant, sample peak, true peak, clipping inspection, stereo/mono checks, chain/settings, engineer, and date.
+
+See production/MASTERING-SPECIFICATION.md.
+
+## 7. Human listening approval
+
+Current status: PENDING. No listening approval is recorded.
+
+A human reviewer must identify the exact file hash, review playback on appropriate devices, check musical balance, timing, artifacts, fades, vocal intelligibility if applicable, stereo image, and translation, and record a decision and notes.
+
+See production/LISTENING-APPROVAL.md.
+
+## 8. Separate public release stream
+
+PRIVATE_COMPOSITION → RENDERED_MASTER → RIGHTS_REVIEW → TECHNICAL_QA → MASTERING → LISTENING_REVIEW → METADATA_AND_ARTWORK → HUMAN_RELEASE_APPROVAL → PUBLIC_RELEASE
 
 A public release must have:
-- Confirmed authorship and rights for lyrics, composition, samples, performances, and artwork
+- Confirmed authorship and rights for all material
 - Final WAV master and requested distribution formats
 - Verified hashes and render/mastering receipts
 - Track title, contributors, credits, ISRC if assigned, release date, territory, explicit-content status, and artwork
-- Human approval receipt naming the approved assets and destination
+- Human approval receipt naming the approved asset hashes and destination
 - Public listing URL and post-publication readback
 
 No renderer, CI job, mirror, or assistant may publish automatically. A rendered file is not automatically approved for distribution.
 
-## 5. Connected repositories
+See release/RELEASE-PROCESS.md and release/RELEASE-GATE.md.
+
+## 9. Connected repositories
 
 - DataEnvelopeMint — https://github.com/Vanellye/DataEnvelopeMint — envelopes, lyrics, notation, catalog, provenance
 - $ilk Mirror — https://github.com/vanellyetm-ux/-ilk--mirror — lineage and evidence bridge
@@ -71,17 +107,6 @@ No renderer, CI job, mirror, or assistant may publish automatically. A rendered 
 
 Private materials remain private. Public indexes may link to this production repository but must not expose its files.
 
-## 6. Directory map
-
-- arrangements/ — composition event data
-- schemas/ — input contracts
-- tools/ — rendering and validation tools
-- renders/ — actual WAV/MIDI/stem outputs
-- production/ — mixing and mastering plans
-- release/ — release packaging and approval checklists
-- research/phd/ — research and .PhD materials
-- evidence/ — render receipts, checksums, tests, approvals
-
-## 7. Governance
+## 10. Governance
 
 Keep composition source immutable once tagged; make revisions through reviewable commits. Preserve source references and transformation notes. Never overwrite a released master silently. Every new render receives a new receipt. Public promotion is a distinct, human-authorized step.
