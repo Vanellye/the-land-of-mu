@@ -18,7 +18,7 @@
       "path": "renders/wav/returning-light-demo-master.wav.mastering.json",
       "required": true,
       "status": "generated",
-      "sha256": null
+      "sha256": "e49cd07ac7fb3a97fb93b4960d70324ae2426fbd"
     },
     {
       "role": "premaster_archive",
@@ -47,7 +47,7 @@
   ],
   "gates": {
     "rights_review": "pending",
-    "mastering_measurement": "generated_pending_human_engineering_review",
+    "mastering_measurement": "automated_loudness_processing_complete_human_engineering_review_pending",
     "human_listening_approval": "pending",
     "metadata_and_artwork_review": "pending",
     "human_publication_authorization": "not_granted"
@@ -57,5 +57,14 @@
     "url": null,
     "verified_at": null
   },
-  "policy": "Only explicitly selected files with verified hashes and completed gates may be copied to a public destination. Never publish the private production repository wholesale."
+  "policy": "Only explicitly selected files with verified hashes and completed gates may be copied to a public destination. Never publish the private production repository wholesale.",
+  "measured_audio": {
+    "integrated_loudness_lufs": -13.77,
+    "true_peak_dbtp": -9.41,
+    "loudness_range_lu": 0.2,
+    "sample_rate_hz": 48000,
+    "bit_depth": 24,
+    "channels": 2,
+    "duration_seconds": 5.644146
+  }
 }
