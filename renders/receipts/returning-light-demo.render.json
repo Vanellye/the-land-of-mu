@@ -1,0 +1,44 @@
+{
+  "receipt_version": "1.0",
+  "renderer": "the-land-of-mu/tools/render.py",
+  "renderer_version": "0.1.0",
+  "rendered_at": "2026-11-27T22:31:24.556378+00:00",
+  "source_arrangement": "arrangements/demo-returning-light.json",
+  "track_id": "demo-returning-light",
+  "title": "Returning Light \u2014 Render Test",
+  "tempo_bpm": 68,
+  "meter": {
+    "numerator": 3,
+    "denominator": 4
+  },
+  "wav": {
+    "file": "returning-light.wav",
+    "bytes": 995668,
+    "sha256": "5506ff80d0485eadf4f7795b01cc048e9388c4aaf69433ab8bb660a4acae5342",
+    "sample_rate": 44100,
+    "channels": 2,
+    "bit_depth": 16,
+    "duration_seconds": 5.644118,
+    "frames": 248906,
+    "peak_sample": 4518,
+    "peak_dbfs": -17.21
+  },
+  "midi": {
+    "file": "returning-light.mid",
+    "bytes": 103,
+    "sha256": "036fd8055f7cce06ad1c41f4109083418c256400b2f8430796701d8f49d072ef",
+    "format": 0,
+    "ppq": 480
+  },
+  "validation": {
+    "wav_nonempty": true,
+    "midi_header_valid": true,
+    "midi_track_valid": true,
+    "pcm_peak_below_full_scale": true
+  },
+  "limitations": [
+    "Sine oscillator proof renderer; not a sampled instrument engine.",
+    "No EQ, compression, reverb, loudness normalization, or mastering.",
+    "Human listening and rights review are not automated."
+  ]
+}
