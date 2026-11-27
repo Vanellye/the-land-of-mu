@@ -1,0 +1,63 @@
+name: Master and store release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_path:
+        description: Repository-relative premaster WAV path
+        required: true
+        default: renders/wav/returning-light-demo.wav
+      target_i:
+        description: Integrated loudness target (LUFS)
+        required: true
+        default: "-14"
+      target_tp:
+        description: True peak ceiling (dBTP)
+        required: true
+        default: "-1"
+      target_lra:
+        description: Loudness range target (LU)
+        required: true
+        default: "11"
+
+permissions:
+  contents: write
+
+jobs:
+  master:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Validate selected source path
+        id: paths
+        env:
+          SOURCE_PATH: ${{ inputs.source_path }}
+        run: |
+          case "$SOURCE_PATH" in renders/wav/*.wav) ;; *) echo "Source must be under renders/wav and end in .wav"; exit 2;; esac
+          test -f "$SOURCE_PATH"
+          name="$(basename "$SOURCE_PATH" .wav)"
+          echo "output=renders/wav/${name}-master.wav" >> "$GITHUB_OUTPUT"
+      - name: Run two-pass mastering
+        run: |
+          python3 tools/master.py "${{ inputs.source_path }}" \
+            --out "${{ steps.paths.outputs.output }}" \
+            --target-i "${{ inputs.target_i }}" \
+            --target-tp "${{ inputs.target_tp }}" \
+            --target-lra "${{ inputs.target_lra }}"
+      - name: Store master and measurement report on main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${{ steps.paths.outputs.output }}" "${{ steps.paths.outputs.output }}.mastering.json"
+          git commit -m "Store mastered release candidate"
+          git push origin HEAD:main
