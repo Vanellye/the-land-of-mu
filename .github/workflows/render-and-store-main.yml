@@ -1,0 +1,44 @@
+name: Render and store on main
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: land-of-mu-render-store-main
+  cancel-in-progress: false
+
+jobs:
+  render-store:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Render WAV and MIDI
+        run: python tools/render.py arrangements/demo-returning-light.json --out /tmp/returning-light
+      - name: Store versioned production files
+        run: |
+          mkdir -p renders/wav renders/midi renders/receipts
+          cp /tmp/returning-light.wav renders/wav/returning-light-demo.wav
+          cp /tmp/returning-light.mid renders/midi/returning-light-demo.mid
+          cp /tmp/returning-light.render.json renders/receipts/returning-light-demo.render.json
+      - name: Commit render files to main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add renders/wav/returning-light-demo.wav renders/midi/returning-light-demo.mid renders/receipts/returning-light-demo.render.json
+          if git diff --cached --quiet; then
+            echo 'No rendered asset changes to store.'
+          else
+            git commit -m 'Store verified Returning Light WAV and MIDI render'
+            git push origin HEAD:main
+          fi
