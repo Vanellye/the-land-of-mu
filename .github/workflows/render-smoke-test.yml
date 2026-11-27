@@ -1,0 +1,50 @@
+name: Render smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Render WAV and MIDI
+        run: |
+          python tools/render.py arrangements/demo-returning-light.json --out /tmp/land-of-mu-demo
+      - name: Validate outputs
+        run: |
+          python - <<'PY'
+          import json, wave
+          from pathlib import Path
+          base = Path("/tmp/land-of-mu-demo")
+          wav = base.with_suffix(".wav")
+          midi = base.with_suffix(".mid")
+          receipt = json.loads(base.with_suffix(".render.json").read_text())
+          assert wav.exists() and wav.stat().st_size > 44
+          assert midi.exists() and midi.read_bytes()[:4] == b"MThd"
+          with wave.open(str(wav), "rb") as f:
+              assert f.getnchannels() == 2
+              assert f.getframerate() == 44100
+              assert f.getsampwidth() == 2
+          assert all(receipt["validation"].values()), receipt["validation"]
+          print("WAV/MIDI render smoke test passed")
+          PY
+      - name: Upload render artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: land-of-mu-render-smoke-test
+          path: |
+            /tmp/land-of-mu-demo.wav
+            /tmp/land-of-mu-demo.mid
+            /tmp/land-of-mu-demo.render.json
+          if-no-files-found: error
