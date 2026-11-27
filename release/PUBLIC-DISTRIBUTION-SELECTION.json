@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "release_id": "returning-light-demo-public-candidate",
+  "track_id": "demo-returning-light",
+  "release_title": "Returning Light",
+  "selection_status": "candidate_only",
+  "public_destination": null,
+  "selected_assets": [
+    {
+      "role": "audio_master",
+      "path": "renders/wav/returning-light-demo-master.wav",
+      "required": true,
+      "status": "not_created"
+    },
+    {
+      "role": "mastering_measurement_report",
+      "path": "renders/receipts/returning-light-demo-master.wav.mastering.json",
+      "required": true,
+      "status": "not_created"
+    },
+    {
+      "role": "midi",
+      "path": "renders/midi/returning-light-demo.mid",
+      "required": false,
+      "status": "existing_render_test_only"
+    },
+    {
+      "role": "artwork",
+      "path": null,
+      "required": true,
+      "status": "not_selected"
+    },
+    {
+      "role": "credits_and_metadata",
+      "path": "release/RELEASE-METADATA-TEMPLATE.json",
+      "required": true,
+      "status": "template_only"
+    }
+  ],
+  "gates": {
+    "rights_review": "pending",
+    "mastering_measurement": "pending",
+    "human_listening_approval": "pending",
+    "metadata_and_artwork_review": "pending",
+    "human_publication_authorization": "not_granted"
+  },
+  "publication": {
+    "published": false,
+    "url": null,
+    "verified_at": null
+  },
+  "policy": "Only explicitly selected files with verified hashes and completed gates may be copied to a public destination. Never publish the private production repository wholesale."
+}
