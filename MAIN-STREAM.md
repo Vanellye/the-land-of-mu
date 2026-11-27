@@ -7,106 +7,93 @@
 
 ## 1. Purpose
 
-A reproducible route from original composition data to actual WAV/MIDI artifacts, quality checks, release candidates, and separately authorized public distribution.
+A reproducible route from original composition data to actual WAV/MIDI artifacts, mastering candidates, quality checks, release candidates, and separately authorized public distribution.
 
-The stream distinguishes:
-1. Composition source — lyrics, melody, harmony, rhythm, arrangement.
-2. Render recipe — machine-readable arrangement plus renderer version/settings.
-3. Rendered artifact — actual WAV, MIDI, and later stems.
-4. Verified release candidate — checksums, technical checks, rights status, listening notes.
-5. Public release — separate publication event with explicit human authorization.
+The stream distinguishes composition source, render recipe, rendered artifact, verified release candidate, and public release. These are separate states.
 
 ## 2. Production stream
 
-IDEA → COMPOSED → ARRANGED → RENDER_QUEUED → WAV_MIDI_RENDERED → TECH_CHECKED → RIGHTS_REVIEWED → MASTERED → LISTENING_APPROVED → RELEASE_CANDIDATE → HUMAN_RELEASE_APPROVED → PUBLIC_RELEASE
+IDEA → COMPOSED → ARRANGED → RENDERED_PREMASTER → MASTERING_PROCESSED → TECH_CHECKED → RIGHTS_REVIEWED → LISTENING_APPROVED → RELEASE_CANDIDATE → HUMAN_RELEASE_APPROVED → PUBLIC_RELEASE
 
 ### Render command
 
     python3 tools/render.py arrangements/demo-returning-light.json --out renders/demo-returning-light
 
-The starter engine synthesizes sine-wave note events and produces actual PCM WAV and Standard MIDI files. It is transparent and dependency-free. Future engines can replace the oscillator with sampled instruments, soundfonts, synthesis plugins, and a mix/master chain while retaining the envelope and receipt format.
+The starter engine synthesizes sine-wave note events. It is a pipeline proof, not a sampled-instrument production.
 
-## 3. Persistent main-branch file storage
+## 3. Persistent main-branch storage
 
-The private main branch stores versioned production files:
-
-- renders/wav/ — WAV masters and premaster exports
+- renders/wav/ — premaster and mastered WAV candidates
 - renders/midi/ — Standard MIDI files
-- renders/stems/ — aligned stems
-- renders/receipts/ — renderer settings, technical validation, and SHA-256 receipts
+- renders/stems/ — aligned track and bus stems
+- renders/receipts/ — render and mastering reports
 - evidence/rights/ — rights review records and safe evidence references
-- evidence/mastering/ — mastering measurements and reports
+- evidence/mastering/ — engineering notes and measurements
 - evidence/listening/ — human listening reviews
 - evidence/approvals/ — human release approvals
+- release/ — metadata, selected public files, and package rules
 
-The manually dispatched workflow at .github/workflows/render-and-store-main.yml renders the demo and commits WAV, MIDI, and receipt files to main. The workflow does not publish to external services.
+The render workflow stores WAV/MIDI/receipt outputs on main. The separate `.github/workflows/master-and-store-main.yml` workflow runs the two-pass mastering process on a selected WAV under `renders/wav/` and stores a new master plus measurement report on main. Neither workflow publishes externally.
 
-### Stored first render
+### Existing demo premaster
 
-- WAV: renders/wav/returning-light-demo.wav
-- MIDI: renders/midi/returning-light-demo.mid
-- Receipt: renders/receipts/returning-light-demo.render.json
+- WAV: `renders/wav/returning-light-demo.wav`
+- MIDI: `renders/midi/returning-light-demo.mid`
+- Receipt: `renders/receipts/returning-light-demo.render.json`
 
-The receipt records 44.1 kHz, 16-bit, stereo PCM, 5.644118 seconds, MIDI format 0 at 480 PPQ, file sizes, SHA-256 hashes, and technical validation. This is a basic sine-oscillator demo render, not a mastered commercial release.
+This is a short sine-oscillator demo premaster. It is not a finished commercial recording.
 
-## 4. Technical quality checks
+## 4. Mastering process
 
-- WAV header and PCM format parse correctly
-- Sample rate, bit depth, channels, and duration match settings
-- MIDI header, track chunk, tempo, note-on/note-off events, and end marker are valid
-- Output files are non-empty and SHA-256 hashes are recorded
-- No clipping in generated PCM
+`tools/master.py` uses FFmpeg two-pass EBU R128 loudnorm, preserves the source, and writes a 24-bit PCM WAV at 48 kHz by default with a JSON report containing source/output SHA-256 hashes and measured loudness data.
 
-Technical validation does not establish subjective quality or mastering compliance.
+Example:
 
-## 5. Rights review
+    python3 tools/master.py renders/wav/returning-light-demo.wav --out renders/wav/returning-light-demo-master.wav
 
-Current status: NOT REVIEWED. No rights clearance is claimed.
+Default targets are -14 LUFS-I, -1 dBTP, and 11 LU LRA. These are configurable starting values, not universal artistic targets. The automated chain does not perform creative EQ, saturation, stereo widening, or reverb. Human engineering and listening checks remain required.
 
-Before release, inventory composition, lyrics, samples, loops, soundfonts, performances, artwork, and contributions. Record each creator/rightsholder, source, rights basis, permitted scope, restrictions, evidence reference, reviewer, decision, and date. Pending, restricted, or rejected material blocks release until resolved.
+**Status:** mastering engine and workflow implemented; no final master has yet been generated or approved.
 
-See production/RIGHTS-REVIEW.md.
+See `production/MASTERING-SPECIFICATION.md`.
 
-## 6. Mastering
+## 5. Rights review and listening approval
 
-Current status: NOT MASTERED. The starter renderer has no EQ, compression, limiting, true-peak oversampling, loudness normalization, dithering, or mastering measurement.
+Rights review remains pending. No clearance is claimed for composition, performances, soundfonts, samples, loops, or artwork until individually documented.
 
-A master record must include the premaster and final hashes, sample format, LUFS-I, LRA where relevant, sample peak, true peak, clipping inspection, stereo/mono checks, chain/settings, engineer, and date.
+Human listening approval remains pending and must identify the exact final master SHA-256. Check tonal balance, transient integrity, timing, artifacts, noise, fades, stereo/mono compatibility, and translation.
 
-See production/MASTERING-SPECIFICATION.md.
+See `production/RIGHTS-REVIEW.md` and `production/LISTENING-APPROVAL.md`.
 
-## 7. Human listening approval
+## 6. Public distribution file selection
 
-Current status: PENDING. No listening approval is recorded.
+`release/PUBLIC-DISTRIBUTION-SELECTION.json` is the allowlist for the intended export package. It names the candidate master, mastering report, optional MIDI, artwork, and metadata. `tools/package_release.py` builds a ZIP only when every required gate is marked approved and all required files exist. Use `--allow-pending` only for a diagnostic selection report; it never creates a ZIP.
 
-A human reviewer must identify the exact file hash, review playback on appropriate devices, check musical balance, timing, artifacts, fades, vocal intelligibility if applicable, stereo image, and translation, and record a decision and notes.
+The current selection is blocked: the master and report do not yet exist, artwork is not selected, and rights/listening/release approvals remain pending.
 
-See production/LISTENING-APPROVAL.md.
+See `release/PUBLIC-DISTRIBUTION.md`.
 
-## 8. Separate public release stream
+## 7. Public release gates
 
-PRIVATE_COMPOSITION → RENDERED_MASTER → RIGHTS_REVIEW → TECHNICAL_QA → MASTERING → LISTENING_REVIEW → METADATA_AND_ARTWORK → HUMAN_RELEASE_APPROVAL → PUBLIC_RELEASE
+A public release requires:
+- Confirmed authorship and rights for every asset
+- Final WAV master and requested formats
+- Verified hashes and mastering report
+- Human listening approval against the exact master hash
+- Complete metadata, credits, and cleared artwork
+- Human authorization naming exact asset hashes and destination
+- Post-publication URL and verification
 
-A public release must have:
-- Confirmed authorship and rights for all material
-- Final WAV master and requested distribution formats
-- Verified hashes and render/mastering receipts
-- Track title, contributors, credits, ISRC if assigned, release date, territory, explicit-content status, and artwork
-- Human approval receipt naming the approved asset hashes and destination
-- Public listing URL and post-publication readback
+No CI job or assistant publishes automatically. The production repository remains private. A dedicated export destination must receive only the approved selected assets; making this repository public would expose all repository files and history.
 
-No renderer, CI job, mirror, or assistant may publish automatically. A rendered file is not automatically approved for distribution.
+## 8. Connected repositories
 
-See release/RELEASE-PROCESS.md and release/RELEASE-GATE.md.
+- DataEnvelopeMint — https://github.com/Vanellye/DataEnvelopeMint
+- $ilk Mirror — https://github.com/vanellyetm-ux/-ilk--mirror
+- Lumi — https://github.com/vanellyetm-ux/Lumi/blob/main/MUSIC-MAIN-STREAM.md
 
-## 9. Connected repositories
+Public indexes must not expose private source materials.
 
-- DataEnvelopeMint — https://github.com/Vanellye/DataEnvelopeMint — envelopes, lyrics, notation, catalog, provenance
-- $ilk Mirror — https://github.com/vanellyetm-ux/-ilk--mirror — lineage and evidence bridge
-- Lumi — https://github.com/vanellyetm-ux/Lumi/blob/main/MUSIC-MAIN-STREAM.md — public-facing stream index
+## 9. Governance
 
-Private materials remain private. Public indexes may link to this production repository but must not expose its files.
-
-## 10. Governance
-
-Keep composition source immutable once tagged; make revisions through reviewable commits. Preserve source references and transformation notes. Never overwrite a released master silently. Every new render receives a new receipt. Public promotion is a distinct, human-authorized step.
+Preserve provenance and immutable history. Never silently overwrite a released master. Every render/master gets a distinct receipt and hash. Public promotion is a separate, human-authorized event.
