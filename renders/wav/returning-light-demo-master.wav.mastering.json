@@ -1,0 +1,59 @@
+{
+  "report_version": "1.0",
+  "created_at": "2026-11-27T22:39:29.862811+00:00",
+  "tool": "tools/master.py",
+  "ffmpeg_version": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+  "input": {
+    "file": "returning-light-demo.wav",
+    "sha256": "5506ff80d0485eadf4f7795b01cc048e9388c4aaf69433ab8bb660a4acae5342",
+    "bytes": 995668
+  },
+  "output": {
+    "file": "returning-light-demo-master.wav",
+    "sha256": "e69f1f247a17d0cbd4f8877bc9e4ddaac1ac4c77f7bd3e4bde8f8d836f45b2dc",
+    "bytes": 1625616,
+    "streams": [
+      {
+        "codec_name": "pcm_s24le",
+        "sample_rate": "48000",
+        "channels": 2,
+        "bits_per_sample": 24,
+        "duration": "5.644146"
+      }
+    ]
+  },
+  "targets": {
+    "integrated_loudness_lufs": -14.0,
+    "true_peak_dbtp": -1.0,
+    "loudness_range_lu": 11.0
+  },
+  "first_pass_measurements": {
+    "input_i": "-21.80",
+    "input_tp": "-17.21",
+    "input_lra": "0.80",
+    "input_thresh": "-31.80",
+    "output_i": "-14.23",
+    "output_tp": "-9.86",
+    "output_lra": "0.20",
+    "output_thresh": "-24.23",
+    "normalization_type": "dynamic",
+    "target_offset": "0.23"
+  },
+  "final_pass_measurements": {
+    "input_i": "-21.57",
+    "input_tp": "-17.21",
+    "input_lra": "0.20",
+    "input_thresh": "-31.57",
+    "output_i": "-13.77",
+    "output_tp": "-9.41",
+    "output_lra": "0.20",
+    "output_thresh": "-23.77",
+    "normalization_type": "linear",
+    "target_offset": "-0.23"
+  },
+  "notes": [
+    "Two-pass FFmpeg EBU R128 loudnorm processing; no creative EQ, saturation, stereo widening, or reverb is applied.",
+    "Loudness targets are delivery starting points; a qualified human engineer must assess artistic balance, translation, phase, noise, fades, and codec behavior.",
+    "This report does not establish rights clearance or human listening approval."
+  ]
+}
